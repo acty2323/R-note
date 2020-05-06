@@ -1,0 +1,963 @@
+---
+title: "Programming language"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+# Ⅰ. introduction
+__________________________________________________
+
+## ● Calculate
+
+<font size="4">
+
+  1. **" + "** 加；**" - "** 減
+  2. **" * "** 乘；**" / "** 除
+  3. **" ^ "** or **" sqrt() "** 次方
+  4. **" %/% "** 商；**" %% "** 餘數
+  5. **" abs() "** 絕對值
+  6. **" exp() "** exponential
+  7. **" log(x,base=exp(1)) "**
+  
+</font>
+
+## ● Approximated values
+
+<font size="4">
+
+  1. **" round(x,digits=n) "** 去掉小數的部分且進位,n為設定留下的位數
+```{r}
+round(125.78253,digits=3);round(125.78253,digits=-2)
+```
+  2. **" signif(x,digits=n) "** 去掉小數的部分且進位,n為設定捨掉的位數
+```{r}
+signif(83524587,digits=3);signif(83524587,digits=5)
+```
+  3. **" floor(x) "** 無條件捨去 = **" trunc(x) "**
+  
+     **" ceiling(x) "** 四捨五入
+  
+</font>
+
+## ● Related to descriptive statistics
+
+<font size="4">
+
+  1. mean(x,na.rm=FALSE)
+
+  2. var(x,na.rm=FALSE)
+
+  3. median(x,na.rm=FALSE)
+
+  4. quantile(x, probs = c(),na.rm=FALSE)
+```{r}
+x<-1:25
+quantile(x,0.5);quantile(x,c(0.1,0.5,0.7))
+```
+  5. summary(x)
+```{r}
+summary(x)
+```
+
+</font>
+
+## ● Special values in R
+
+<font size="4">
+  
+  - NA (缺失值)
+```{r}
+NA
+```
+  - NaN (非數值)
+```{r}
+0/0
+```
+  - Inf (無窮大)
+  - -Inf
+```{r}
+2/0
+-2/0
+```
+  - pi
+```{r}
+pi
+```
+  - 1e-3
+```{r}
+1e-3
+```
+ - 
+```{r}
+Inf+100
+Inf-Inf+10
+NaN+Inf
+NA+Inf
+NaN+NA
+```
+
+</font>
+
+## ● Objects
+
+<font size="4">
+```{r}
+x<-1:25
+y<-3
+z<-"k"
+objects()
+```
+=ls() (不是is)
+```{r}
+ls()
+```
+If you want to delete some objects,you can type rm()
+```{r}
+rm(y,z)
+objects()
+```
+
+</font>
+
+# Ⅱ. Vector
+__________________________________
+
+## ● Numeric vector
+
+<font size="4">
+  1. creating a vector
+  
+  * c() 
+```{r}
+a<-c(1:5)
+b<-c(9:13)
+b<-c(a,b)
+b
+```
+  * seq()、rep()
+```{r}
+seq(1,10,by=3) ## by 公差
+seq(1,10,length.out = 3) 
+```
+
+```{r}
+rep(3,12)
+rep(seq(2,10,2),2)
+rep(c(1,4),c(3,2))
+rep(seq(2,10,2),rep(3,5))
+(1:5)+rep((0:4),rep(5,5))
+```
+  2. some common functions to vectors
+```{r}
+length(a) ## the # of elements in the vector
+```
+  * use [] to select the locations in the vector.
+```{r}
+a[1]
+b[c(3,8)]
+b[2:9]
+```
+  * 刪除第n個值用[-n]
+```{r}
+a[-3] ## 需重新指定
+a;b
+b<-b[-c(6,9)]
+b
+b<-b[-c(2:4)]
+b
+```
+  * 改變數值
+```{r}
+b[1]<-0
+b
+```
+  * unique()
+```{r}
+c<-c(3,3,3,5,5,5,5,1,2,10,8,8,9)
+unique(c)
+```
+  * table()：count the number of each element from the vector
+```{r}
+table(c)
+```
+
+  3. create a null or initial vector
+  (i) **c()** ## easy to add a value into the vector;need not know the length
+```{r}
+v1<-c()
+v1<-c(v1,a,b)
+v1
+```
+  (ii) **rep(0,n)**
+```{r}
+v2<-rep(0,7)
+v2[2:4]<-b ## b從第一個數開始
+v2
+v2[5:9]<-a ## 可以超過原預設長度
+v2
+```
+  (iii) **rep(NA,n)** ## 推薦用此方法 ## with known length and the position of elements
+```{r}
+v3<-rep(NA,7)
+v3[2:4]<-b[2:4]
+v3[5:9]<-a
+v3
+```
+
+  4. set operations 
+  * union(x,y) 
+```{r}
+union(b,c)
+```
+  * intersect(x,y) ##以x為基準
+```{r}
+intersect(b,c)
+```
+  * setdiff(x,y) ##union(x,y)-intersect(x,y)
+```{r}
+setdiff(b,c)
+```
+  * setequal(x,y) ##x和y是否一樣
+```{r}
+setequal(b,c)
+```
+  5. sorting and ordering of vector
+  * sort(x,decreasing=FALSE) ##把NA拿掉
+```{r}
+v3
+sort(v3)
+sort(v3,decreasing=TRUE)
+```
+  * order(...,na.last=TRUE,decreasing=FALSE) ## sort完後回傳index,不把NA拿掉
+```{r}
+order(v3)
+v3[order(v3)]
+```
+  
+</font>
+
+## ● Character vector
+<font size="4">
+
+  1. print characters (print("Hello"))
+  
+  2. strsplit(x,a) ## 字串x用a分割(把a拿掉)
+```{r}
+text1<-"Hey!Let's go to a game"
+strsplit(text1," ")
+strsplit(text1,"!")
+```
+  3. lowercase and uppercase
+  * toupper() ##變大寫
+```{r}
+toupper(text1)
+```
+  * tolower() ##變小寫
+```{r}
+tolower(text1)
+```
+  4. basic operations for character vectors
+  * substr(x,開始index,結束index) ## 從字串中取出一部份子字串
+```{r}
+text<-c(text1,"orange")
+substr(text,1,4)
+```
+  * grep(x,y) ##找出y中含有x的字串index
+```{r}
+i<-grep("H",text)
+i
+text[i] ##show the whole character 
+```
+  * paste(x,y,sep,collapse) ##把y用sep接在x後面,collapse 用來分開每個字串(變一個字串)
+```{r}
+paste(text,"OK") ##with space
+paste(text,"OK",sep = "") ##no space
+paste("Hello~",text,collapse=";")
+```
+
+</font>
+
+## ● Logical vector
+<font size="4">
+
+  1. 回傳TRUE & FALSE (Boolean operations)
+  
+  2. "==" equal；"!=" not equal
+  
+  3. "is."series
+  * is.null() ##判斷是否是null vector
+```{r}
+is.null(c())
+is.null(text)
+```
+  * is.na() ##判斷有無缺失值；is.nan()；is.infinite()
+  * is.character()；is.integer()；is.double；is.numeric()
+
+</font>
+
+
+# Ⅲ. Metrix
+________________________________
+## ● construct a matrix
+<font size="4">
+
+  1. by row
+  * rbind(a,b,c,d...)
+```{r}
+a<-1:5;b<-6:10;c<-11:15;d<-16:20
+M1<-rbind(a,b,c,d)
+M1
+```
+  * matrix(x,nrow,ncol,byrow=TRUE)
+```{r}
+M11<-matrix(1:20,nrow = 4,ncol = 5,byrow=TRUE)
+M11
+```
+  2. by column
+  * cbind(a,b,c,d...)
+```{r}
+aa<-1:5;bb<-6:10;cc<-11:15;dd<-16:20
+M2<-rbind(aa,bb,cc,dd)
+M2
+```
+  * matrix(x,nrow,ncol)
+```{r}
+M22<-matrix(1:20,nrow = 5,ncol = 4)
+M22
+```
+
+</font>
+
+## ● Features for matrix
+<font size="4">
+
+  1. dim(x)
+  
+  2. colnames(x);rownames(x);dimnames(x)
+  
+  3. 指定colnames & rownames
+```{r}
+colnames(M11)<-c("C1","C2","C3","C4","C5") ##直接指定
+M11
+M22<-matrix(1:20,nrow=5,ncol=4,dimnames = list(c("R1","R2","R3","R4","R5"),c("C1","C2","C3","C4")) ) ##建matrix時指定
+M22
+```
+
+</font>
+
+## ● Extract
+<font size="4">
+
+  1. extract elememts from a matrix
+```{r}
+M11[5] ##從上到下、左到右數下來
+M11[2,4] ##[列,行]
+M11[c(1,2),c(3,4)]
+```
+  
+  2. extracrt a row or cloumn from a matrix
+```{r}
+M11[,4]
+M11[,c(3,5)]
+```
+  
+  3. extract elements by names
+```{r}
+M22[c("R3","R4"),]
+M22[c("R3","R4"),c("C2","C4")]
+```
+  
+</font>
+
+## ● Evaluation of Matrix
+<font size="4">
+
+  1. 加減乘除都和之前的一樣
+```{r}
+a<-matrix(c(1:4),2,2)
+b<-a+3
+b
+b*5
+```
+  2. colSums(x)；rowSums(x) ## summary each column or each row
+```{r}
+colSums(a)
+sum(a[,2]) ##做特定行/列
+```
+
+  3. t(x) ##transport
+  
+  4. **" % * % "** ##evaluate multiplication of matrices
+  5. diag(x) ##diagonal matrix
+  6. det(x) ##determinant of a matrix
+  7. solve(x) ##inverse matrix of x
+  8. eigen(x) ##eigen system(list[[values],[vectors]])
+```{r}
+eigen(a)
+```
+</font>
+
+
+# IV. Control Flow
+________________________________________
+
+## ● for()
+<font size="4">
+**for (index in vector) commands,**
+```{r}
+v2<-rep(NA,8)
+v2[1]<-3
+for (n in (1:7)){
+  v2[n+1]<-2*v2[n]+3
+}
+v2
+```
+  + n! (=factorial(n))
+```{r}
+##n=10
+n<-10
+ans<-1
+for (j in (n:1)){
+  ans<-ans*j
+}
+```
+  1. use for() to construct a matrix
+```{r}
+M<-matrix(c(3,2,1,2,2,6,4,1,4,8,6,2),4,3) ##c(從上到下,從左到右)
+nr<-dim(M)[1]
+m<-c()
+for (j in (1:nr)){
+  m<-c(m,mean(M[j,]))
+}
+```
+## ● if()
+**if (condition) {commands when TRUE}**
+
+**if (condition) {commands when TRUE} else {commands when FALSE}**
+
+**if (condition) {commands when case1 is TRUE} else if {commands when case2 is TRUE} else {commands when case1 and case2 are FALSE}**
+```{r}
+bag<-c("r","b","y","y","y","r","r","b")
+n.bag<-rep(NA,length(bag))
+for (i in (1:length(bag))){
+  if (bag[i]=="r") n.bag[i]<-1
+  else if (bag[i]=="b") n.bag[i]<-2
+  else n.bag[i]<-3
+}
+n.bag
+```
+**ifelse(condition,commands when TRUE,commands when FALSE)**
+```{r}
+nn.bag<-ifelse(bag=="r",1,ifelse(bag=="b",2,3))
+nn.bag
+```
+
+
+</font>
+
+## ● while()
+<font size="4">
+**while(condition)statements**
+
++ for vs while
+
+$[for]$
+```{r}
+for (j in(1:8)) print(j)
+```
+$[while]$
+
+```{r}
+j<-1
+while(j<=8){
+  print(j)
+  j<-j+1
+}
+```
+
+</font>
+
+## ● break,next,and break
+<font size="4">
+
+  1. break 若遇特殊情形想結束迴圈執行
+  
+  **if(condition)break**
+  
+  2. next 若遇特殊情形想跳過迴圈執行
+  
+  3. repeat
+  
+  **repeat{statements}**
+  
+</font>
+
+# V. Functions
+____________________________________
+## ● source()
+<font size="4">
+save the script named as "XXX.R" and use **source()** to run the code
+1. print()&cat()
+
+  + print()shows with "" between characters
+  + cat(a,"\n",b,sep="")shows without ""between characters.You can add "\n" to make characters in a new line.sep 用以分割字串和字串之間
+  
+</font>
+
+## ● function()
+```{r}
+##example
+f<-function(x,x.digits=0){
+  x.percent<-round(100*x,digit=x.digits)
+  x.show<-paste(x.percent,"%",sep="")
+  return(x.show)
+}
+f(c(0.8933,0.2344,0.0764,0.7736))
+```
+
+## ● list()
+<font size="4">
+```{r}
+x<-list() ## a null list
+x<-list(a=3,b=c(1,2,3,4),c=c("A","B"))
+x[[4]]<-seq(0,10,length.out = 3) ##without name
+x$name<-seq(0,10,length.out = 2)^2 ##with name
+x
+names(x)
+```
+  + **$** or **[[ ]]** ##extract an element from a list
+```{r}
+x$a
+x[["c"]]
+```
+</font>
+
+# VI. DataFrame
+______________________________________
+## ● data.frame()
+<font size="4">
++ matrix v.s dataframe
+
+(matrix)
+```{r}
+x<-matrix(NA,3,3)
+x[,1]<-c("red","yellow","blue")
+x[,2]<-c(1,2,3)
+x[,3]<-c(4,5,6)
+colnames(x)<-c("colors","numbers","more.numbers")
+x
+```
+(dataframe)
+```{r}
+colors<-c("red","yellow","blue")
+numbers<-c(1,2,3)
+color.n<-data.frame(colors,numbers,more.numbers=c(4,5,6),stringsAsFactors = FALSE) ##可用str()來看stringsAsFactors的用途
+color.n
+```
++ add rows(stringsAsFactors一定要是FALSE)
+  - rbind()
+```{r}
+color.nr<-rbind(color.n,c("black",3,5))
+color.nr
+```
++ add columns 
+  - cbind()
+```{r}
+number1<-c(2,4,6)
+color.nc1<-cbind(color.n,number1)
+color.nc1
+## 不能這樣寫color.nc1<-cbind(color.nc1,c("number1",2,4,6))
+```
+  - $
+```{r}
+color.nc2<-color.n
+color.nc2$number2<-c(2,4,6)
+color.nc2
+```
+
+</font>
+
+# VII. Read data and R package
+________________________________________
+## ● Read data
+<font size="4">
+
+1. read txt
+
+  **read.table(file="XXX.txt",header=TRUE)** ##(完整路徑)
+
+2. read csv
+
+  **read.csv("XXX.csv")** ##(完整路徑)
+
+3. fread()
+
+  faster and more convenient
+
+## ● R package
+<font size="4">
+
+1. install.package("package名稱") or 右下"package"->"install"
+
+2. library(package名稱) ##呼叫package
+
+</font>
+
+# VIII. Graphics
+_______________________________________
+## ● statistical figures
+<font size="4">
+
+  1.hist(x) ## histogram 直方圖
+```{r}
+x.norm<-rnorm(100,mean=0,sd=1)
+hist(x.norm)
+```
+  2. boxplot(x) ## boxplot 盒形圖
+  
+  * for one chategory
+```{r}
+boxplot(x.norm)
+```
+  
+  * for multiple categories
+
+(use matrix)
+```{r}
+xx<-matrix(rnorm(50),10,5)
+boxplot(xx) 
+```
+(use dataframe)
+```{r}
+xx<-data.frame(group=rep(c("a","b","c","d","e"),each=10),res=rnorm(50))
+boxplot(res~group,xx) ##依group為依據，將res的值分組
+```
+  3. plot(density(x)) ## density plot
+```{r}
+plot(density(x.norm))
+```
+  4. barplot(x) ## barchart 長條圖
+```{r}
+x<-sample(c(1:8),100,replace=TRUE,prob=c(8:1))
+x<-table(x)
+names(x)<-c("a","b","c","d","e","f","g","h")
+barplot(x)
+```
+  5. pie(x) ## 圓餅圖
+```{r}
+pie(x)
+```
+  6. curve(expression,from=...,to=...)
+```{r}
+par(mfrow=c(2,3))
+curve(exp(-x),0,10)
+curve(dnorm(x),-10,10)
+curve(x^2,-10,10)
+curve(sin,0,10)
+curve(3*exp(-3*x),0,6)
+curve(5*x+2,0,10)
+```
+  
+  7. scatter plot
+  * for one category：plot(x,y)
+```{r}
+y<-3*x.norm+rnorm(100,0,1)
+plot(x.norm,y)
+cor(x.norm,y)
+```
+  * for multiple categories：pairs(...)
+(ues matrix)
+```{r}
+xx<-matrix(rnorm(30),10,3)
+pairs(xx,pch=19)
+```
+</font>
+
+## ● scatter plot with specifical items
+<font size="4">
+
+  1. names of plot 
+  
+  **plot(...,main=...,sub=...,xlab=...,ylab=...)**
+  
+  + main：上標題
+  + sub：下標題
+  + xlab：x軸名稱
+  + ylab：y軸名稱
+  
+  2. **plot(...,type=...)**
+  + **"p"**：points
+  + **"l"**：lines
+  + **"b"**：points+lines
+  + **"o"**：lines pass through points
+  + **"h"**：the line between points and x-axis
+  + **"n"**：no content in the plot but plot region
+```{r}
+par(mfrow=c(2,3)) ## split plot ranges
+plot(x.norm,y,type="p",main="p")
+plot(x.norm,y,type="l",main="l")
+plot(x.norm,y,type="b",main="b")
+plot(x.norm,y,type="o",main="o")
+plot(x.norm,y,type="h",main="h")
+plot(x.norm,y,type="n",main="n")
+```
+  
+  3. **plot(...,pch=...)**
+  
+```{r echo=FALSE, out.width = '50%'}
+knitr::include_graphics("https://yqfile.alicdn.com/e9e375494324b2b34eac018e756b0b48c41bd90a.png")
+```
+    
+  4. **plot(...,cex=...)**
+  + size of points：**cex=1.5**
+  + size of title：**cex.main=2**
+  + size of labels of ticks of an axis：**cex.axis=2**
+  + size of labels of the name of an axis：**cex.lab=2**
+    
+  5. **plot(...,type="l",lty=...,lwd=...)**
+    
+```{r echo=FALSE, out.width = '70%'}
+knitr::include_graphics("https://img-blog.csdn.net/20180925201012552?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0lDRVJPTg==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70")
+```
+  
+  6. **plot(...,bty=...) ##box around the plot**
+  + **o**：complete box
+  + **n**：no box
+  + **7**：top & right
+  + **L**：bottom & left
+  + **C**：top & left & bottom
+  + **U**：left & bottom & right
+  7. **plot(...,col=...)**
+  
+  $[use\ name]$：col=c("red","green","blue","grey")
+  
+  8. **plot(...,xlim=...,ylim=...)**
+  + xlim=c(a,b)：$a<=x<=b$
+  + ylim=c(a,b)：$a<=y<=b$
+</font>
+
+## ● add some objects to the existing plot
+<font size="4">
+
+  1. **points(x,y)**：add points
+  2. **lines(...)**：add lines
+  
+      +   lines(h=3) ##加一條x=3的垂直線
+      +   lines(v=5) ##加一條y=5的水平線
+
+  
+  3. **abline(a=(斜率),b=(截距),h=...,v=...,reg=...,coef=...)**
+  4. add text and legend
+  
+      **text(x,y,labels=...)** ## 加字
+  
+      **legend(x,y,legend,...)** ##加legend
+```{r}
+y1<-5*x.norm+rnorm(50,0,3)
+
+plot(x.norm,y,pch=19)
+abline(a=0,b=3)
+par(new=TRUE) ##不重新畫圖，直接把圖疊在上一個上面
+plot(x.norm,y1,col=4,pch=20)
+abline(a=0,b=5,col=4)
+
+text(-1.5,2,"A",cex=5)
+text(1,-5,"B",cex=5,col=2)
+legend("topleft",c("y","y1"),col=c(1,4),lty=c(1,1))
+```
+  
+  5. layout()
+      
+      layout(matrix(c(1,2,3,3,4,5),3,2,byrow=TRUE))
+```{r echo=FALSE, out.width = '50%'}
+knitr::include_graphics("https://static.issue.life/content/img/23-08-2019/637021485354052266.png")
+```
+
+</font>
+
+# IX. Rmarkdown
+_____________________________________
+## ● equation
+<font size="4">
+
+  1. 輸入希臘字母(使用前要加 $\setminus$))
+```{r echo=FALSE, out.width = '80%'}
+knitr::include_graphics("https://cxy.rbind.io/post/rmarkdown_maths_files/figure-html/unnamed-chunk-1-1.png")
+```
+  2. 插入公式
+  
+```{r}
+#1 $...$
+#2 $$...$$ (置中)
+```
+  $x^2+y^2=1$
+  $$x^2+y^2=1$$
+  
+  3. 輸入上下標
+  
+  **^**表示上標，_表示下標。如果上下標內容多於一個字符，需要用{}將這些內容刮成一個整體
+```{r}
+## $$x^{y^z}=(1+{e^x})^{-2x{y^w}}$$
+```
+$$x^{y^z}=(1+{e^x})^{-2x{y^w}}$$
+  
+  4. 輸入括號和分隔號
+  
+  **()**、**[]**和**|**表示符號本身。當要顯示大括號或分隔號時要用$"\setminus left"$和$"\setminus right"$
+```{r}
+## $$f(x,y,z)=3y^2z\left(3+\frac{7x+5}{1+y^2}\right)$$
+```
+
+
+  
+  $$f(x,y,z)=3y^2z\left(3+\frac{7x+5}{1+y^2}\right)$$
+```{r}
+## $$\left.\frac{du}{dx}\right|_{x=0}$$
+```
+
+  $$\left.\frac{du}{dx}\right|_{x=0}$$
+  
+  5. 輸入分數
+```{r}
+##  \frac{分子}{分母}
+```
+  
+  6. 輸入開方
+```{r}
+##\sqrt{} (開平方根)；
+        
+##\sqrt[n]{x} (x開n次方)
+```
+
+```{r}
+## $$\sqrt{5}\ and \sqrt[n]{3}$$
+```
+          
+  
+  $$\sqrt{5}\ and \sqrt[n]{3}$$
+  
+  7. 輸入累加、累乘運算
+      
+      \sum_{下標}^{上標}{function} 累加
+      
+      \prod_{下標}^{上標}{function} 累乘
+      
+  $$\sum_{i=1}^{n}{\frac{1}{i^2}}$$
+  $$\prod_{i=1}^{n}{\frac{1}{i^2}}$$
+  
+  8. 輸入戴帽符號
+```{r}
+## \hat{x}
+```
+
+$\hat{x}$
+```{r}
+## \bar{x}
+```
+$\bar{x}$
+
+</font>
+
+## ● table
+
+```{r}
+##Table Header | Second Header (是直的|，不是/)
+##-------------|---------------
+##Table Cell   | Cell 2
+##Cell 3       | Cell 4
+```
+
+Table Header | Second Header
+-------------|---------------
+Table Cell   | Cell 2
+Cell 3       | Cell 4
+
+## ● matrix
+```{r}
+#$\left[
+#    \begin{array}{cc} ##{cc}置中
+#      A & B \\        ## 兩個斜線\\代表換行
+#      C & D \\
+#    \end{array}
+#  \right]$
+```
+
+$\left[
+    \begin{array}{cc}
+      A & B \\
+      C & D \\
+    \end{array}
+  \right]$
+
+# X. Apply family
+___________________________________
+## ● apply()
+<font size="4">
+
+apply(X,Margin,Fun)
+
+  * X：array or matrix (or a data frame)
+  * Margin：for a matrix 1 indicates rows,2 indicates columns
+  * Fun：name of a function
+```{r}
+A<-matrix(rnorm(1500),500,3)
+apply(A,1,sum) ##(=rowSums)
+apply(A,2,sum) ##(=colSums)
+```
+</font>
+
+## ● lapply()
+<font size="4">
+
+lapply(X,Fun)
+
+  * X：vector or data frame or list
+  * Fun：name of a function
+  * return a list
+```{r}
+c<-list(a=1:10,beta=exp(-3:3))
+lapply(c,mean) ##(=apply(c,mean))
+```
+
+</font>
+
+## ● sapply()
+<font size="4">
+
+sapply(X,Fun,...,simplify=TRUE)
+
+  * X：vector or data frame or list
+  * Fun：name of a function
+  * simplify：logical；TRUE will return an array or a matrix
+  with the same length of output
+  * return a list
+  * lapply(X,Fun,...)=sapply(X,f,simplify=FALSE,USE.NAMES=FALSE)
+```{r}
+sapply(c,summary)
+sapply(c,summary,simplify=FALSE)
+lapply(c,summary)
+```
+  
+</font>
+  
+# 補充
+_______________________________________
+<font size="4">
+
+  1. set.seed(123456)
+  2. sample(1:6,1)/sample(1:6,2,replace=FALSE,prob=NULL)
+  3. runif(100) ##隨機產生100個uniform
+  4. rnorm(100,mean=0,sd=1) ##隨機產生100數符合常態平均為0,標準差為1
+  
+</font>
